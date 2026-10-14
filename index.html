@@ -1,318 +1,309 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>용용님의 주식 관리 앱 v2.6</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Malgun Gothic', sans-serif; padding: 15px; background-color: #f0f2f5; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid #007bff; padding-bottom: 10px; font-size: 18px; margin-top: 0; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #ddd; padding: 5px; border-radius: 10px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 7px; cursor: pointer; font-weight: bold; font-size: 13px; background: none; }
-        .tab-btn.active { background: white; color: #007bff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .summary-item { background: #f8f9fa; padding: 12px; border-radius: 8px; text-align: center; }
-        .summary-value { font-size: 16px; font-weight: bold; }
-        .backup-zone { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
-        .input-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        input, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; width: 100%; }
-        /* 매도 입력 시 강조색 */
-        input#current.sold-mode { background-color: #ffcdd2; border: 2px solid #f44336; color: #b71c1c; }
-        input#current { background-color: #fff9c4; font-weight: bold; color: #d32f2f; border: 2px solid #ffeb3b; }
-        .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .date-label { font-size: 13px; color: #007bff; margin-bottom: 4px; font-weight: bold; }
-        .btn-main { padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; width: 100%; cursor: pointer; margin-bottom: 10px; }
-        .btn-sub { padding: 10px; background: #6c757d; color: white; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; flex: 1; }
-        .stock-item { background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .stock-summary { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: bold; }
-        .stock-details { padding: 15px; display: none; background: #fafafa; font-size: 14px; border-top: 1px solid #eee; position: relative; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .info-label { color: #666; }
-        .info-val { font-weight: bold; }
-        .memo-text { font-style: italic; color: #666; background: #eee; padding: 5px; border-radius: 4px; margin-top: 8px; display: block; }
-        .red { color: #d9534f; }
-        .blue { color: #0275d8; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 15px 0 8px; }
-        .section-title { font-size: 14px; font-weight: bold; color: #888; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>단어장</title>
+<style>
+:root {
+  --bg: #f1f3f4;
+  --surface: #ffffff;
+  --text: #202124;
+  --muted: #5f6368;
+  --border: #dadce0;
+  --accent: #1a73e8;
+  --accent-bg: #e8f0fe;
+  --danger: #d93025;
+  --shadow: 0 1px 3px rgba(60,64,67,.25);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #202124; --surface: #202124; --text: #e8eaed; --muted: #9aa0a6;
+    --border: #5f6368; --accent: #8ab4f8; --accent-bg: #394457; --danger: #f28b82;
+    --shadow: 0 1px 3px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #202124; --surface: #202124; --text: #e8eaed; --muted: #9aa0a6;
+  --border: #5f6368; --accent: #8ab4f8; --accent-bg: #394457; --danger: #f28b82;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Malgun Gothic", sans-serif;
+  min-height: 100vh;
+}
+header {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding: 10px 12px 10px;
+  display: flex; gap: 8px; align-items: center;
+}
+.search {
+  flex: 1; min-width: 0; height: 48px; border: none; border-radius: 24px;
+  background: #fff; color: #202124; padding: 0 20px; font-size: 16px;
+  box-shadow: var(--shadow); outline: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .search { background: #2d2e31; color: #e8eaed; }
+}
+.search::placeholder { color: var(--muted); }
+select {
+  height: 48px; border: none; border-radius: 24px; background: #fff; color: #202124;
+  padding: 0 10px; font-size: 14px; box-shadow: var(--shadow); max-width: 112px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) select { background: #2d2e31; color: #e8eaed; }
+}
+main { padding: 6px 12px 110px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; align-items: start; }
+.card {
+  display: block; width: 100%; text-align: left;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px 16px; cursor: pointer;
+  font: inherit; line-height: 1.5;
+}
+.card h3 { margin: 0 0 14px; font-size: 20px; font-weight: 600; word-break: break-word; }
+.card h3:empty { display: none; }
+.card .body {
+  font-size: 14px; white-space: pre-wrap; word-break: break-word;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 12; line-clamp: 12;
+  overflow: hidden;
+}
+.empty { text-align: center; color: var(--muted); padding: 60px 20px; line-height: 1.8; white-space: pre-line; }
+.fab {
+  position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  width: 58px; height: 58px; border-radius: 18px; border: none;
+  background: var(--accent-bg); color: var(--accent); font-size: 34px; line-height: 1;
+  box-shadow: 0 3px 8px rgba(0,0,0,.35); cursor: pointer;
+}
+dialog {
+  border: none; padding: 0; margin: 0; width: 100vw; max-width: 100vw;
+  height: 100vh; height: 100dvh; max-height: none;
+  background: var(--surface); color: var(--text);
+}
+dialog[open] { display: flex; flex-direction: column; }
+dialog::backdrop { background: transparent; }
+.bar {
+  display: flex; align-items: center; gap: 4px;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px;
+}
+.bar .sp { flex: 1; }
+.icon {
+  border: none; background: transparent; color: var(--text); cursor: pointer;
+  width: 44px; height: 44px; border-radius: 50%; font-size: 24px; line-height: 1;
+}
+.icon.danger { color: var(--danger); font-size: 15px; width: auto; padding: 0 12px; border-radius: 22px; }
+.edit {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 4px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+}
+.edit input, .edit textarea {
+  display: block; width: 100%; border: none; background: transparent; color: var(--text);
+  font: inherit; outline: none; padding: 6px 0; border-radius: 0;
+}
+.edit input { font-size: 27px; font-weight: 600; margin-bottom: 6px; }
+.edit textarea { font-size: 17px; line-height: 1.6; min-height: 60vh; resize: none; overflow: hidden; }
+.err { color: var(--danger); font-size: 13px; min-height: 16px; padding: 0 20px; }
+</style>
 </head>
 <body>
+<header>
+  <input id="q" class="search" type="search" placeholder="검색" autocomplete="off">
+  <select id="sort" aria-label="정렬">
+    <option value="az">이름순</option>
+    <option value="za">이름 역순</option>
+    <option value="created">만든 순</option>
+    <option value="updated">수정 순</option>
+  </select>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden></div>
+</main>
+<button class="fab" id="add" aria-label="새 메모">+</button>
 
-<div class="card">
-    <div class="tabs">
-        <button class="tab-btn active" onclick="changeAcc('total')">통합</button>
-        <button class="tab-btn" id="acc1" onclick="changeAcc(1)" ondblclick="renameAcc(1)">계좌1</button>
-        <button class="tab-btn" id="acc2" onclick="changeAcc(2)" ondblclick="renameAcc(2)">계좌2</button>
-        <button class="tab-btn" id="acc3" onclick="changeAcc(3)" ondblclick="renameAcc(3)">계좌3</button>
-    </div>
-    <h2 id="summaryTitle">💰 통합 자산 현황</h2>
-    <div class="summary-grid">
-        <div class="summary-item"><span>총 매수</span><div id="totalBuy" class="summary-value">0원</div></div>
-        <div class="summary-item"><span>총 평가</span><div id="totalEval" class="summary-value">0원</div></div>
-        <div class="summary-item" style="grid-column: span 2;"><span>총 손익</span><div id="totalProfit" class="summary-value">0원 (0%)</div></div>
-    </div>
-    <div class="backup-zone">
-        <button class="btn-sub" onclick="exportData()">💾 백업(파일저장)</button>
-        <button class="btn-sub" onclick="document.getElementById('fileInput').click()">📂 복구(불러오기)</button>
-        <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
-    </div>
-</div>
-
-<div class="card" id="inputSection" style="display:none;">
-    <h2 id="inputTitle">📈 종목 등록 / 관리</h2>
-    <div id="edit-msg" style="display:none; color:#007bff; font-weight:bold; margin-bottom:10px; text-align:center;">수정 모드 활성화 중</div>
-    <div class="input-box">
-        <input type="text" id="name" placeholder="종목명">
-        <input type="number" id="code" placeholder="종목번호 6자리" oninput="handleInput(this)">
-        <input type="number" id="price" placeholder="매수 단가">
-        <input type="number" id="qty" placeholder="수량">
-        <div style="font-size:12px; color:#d32f2f; margin-bottom: -5px; font-weight: bold;" id="priceLabel">현재가 / 매도가</div>
-        <input type="number" id="current" placeholder="현재가 또는 매도가 입력">
-        <textarea id="memo" placeholder="메모" rows="2"></textarea>
-        <div class="date-row">
-            <div><div class="date-label">📅 매수일</div><input type="date" id="buyDate"></div>
-            <div><div class="date-label">📅 매도일</div><input type="date" id="sellDate" onchange="checkSellMode()"></div>
-        </div>
-    </div>
-    <button class="btn-main" onclick="saveStock()">기록 저장하기</button>
-</div>
-
-<div class="section-header">
-    <div class="section-title" id="listTitle">🟢 현재보유종목 (통합)</div>
-</div>
-<div id="activeList"></div>
-<button class="btn-main" style="background:#6c757d; margin-top:20px;" onclick="toggleSoldList()">📂 거래 완료 종목 보기 ▼</button>
-<div id="soldList" style="display:none; margin-top:10px;"></div>
+<dialog id="dlg">
+  <div class="bar">
+    <button class="icon" id="back" type="button" aria-label="저장하고 닫기">&#8592;</button>
+    <span class="sp"></span>
+    <button class="icon danger" id="del" type="button">삭제</button>
+  </div>
+  <div class="err" id="err"></div>
+  <div class="edit" id="edit">
+    <input id="f-title" placeholder="제목" autocomplete="off" autocapitalize="none">
+    <textarea id="f-body" placeholder="메모 입력"></textarea>
+  </div>
+</dialog>
 
 <script>
-    let currentAcc = 'total';
-    let allStocks = {
-        1: JSON.parse(localStorage.getItem('stocks_1')) || [],
-        2: JSON.parse(localStorage.getItem('stocks_2')) || [],
-        3: JSON.parse(localStorage.getItem('stocks_3')) || []
-    };
-    let accNames = JSON.parse(localStorage.getItem('accNames')) || { 1: "계좌1", 2: "계좌2", 3: "계좌3" };
-    let editingId = null;
+(function () {
+  var words = [];
+  var mode = 'init';
+  var col = null;
+  var editingId = null;
+  var delArmed = false;
+  var LS_KEY = 'vocab-words-v2';
 
-    window.onload = function() {
-        document.getElementById('buyDate').value = new Date().toISOString().split('T')[0];
-        for(let i=1; i<=3; i++) {
-            let el = document.getElementById('acc'+i);
-            if(el) el.innerText = accNames[i];
-        }
-        render();
-    };
+  var $ = function (id) { return document.getElementById(id); };
+  var grid = $('grid'), emptyEl = $('empty');
+  var dlg = $('dlg');
 
-    function checkSellMode() {
-        const sellDate = document.getElementById('sellDate').value;
-        const currentInput = document.getElementById('current');
-        const priceLabel = document.getElementById('priceLabel');
-        if(sellDate) {
-            currentInput.classList.add('sold-mode');
-            priceLabel.innerText = "💰 실제 매도 단가 입력";
-        } else {
-            currentInput.classList.remove('sold-mode');
-            priceLabel.innerText = "현재가 (시세 자동대기)";
-        }
+  function lsRead() {
+    try { var v = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function lsWrite() { try { localStorage.setItem(LS_KEY, JSON.stringify(words)); } catch (e) {} }
+  function newId() { return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  async function saveWord(w) {
+    if (mode === 'db') {
+      await col.doc(w.id).set({ title: w.title, body: w.body, created: w.created, updated: w.updated });
+    } else {
+      var i = words.findIndex(function (x) { return x.id === w.id; });
+      if (i >= 0) words[i] = w; else words.push(w);
+      lsWrite(); render();
     }
+  }
+  async function removeWord(id) {
+    if (mode === 'db') { await col.doc(id).delete(); }
+    else { words = words.filter(function (x) { return x.id !== id; }); lsWrite(); render(); }
+  }
 
-    function changeAcc(acc) {
-        currentAcc = acc;
-        editingId = null;
-        document.getElementById('edit-msg').style.display = 'none';
-        resetInputs();
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        if(acc === 'total') document.querySelector('.tab-btn').classList.add('active');
-        else document.getElementById('acc'+acc).classList.add('active');
-        document.getElementById('inputSection').style.display = (acc === 'total') ? 'none' : 'block';
-        document.getElementById('summaryTitle').innerText = (acc === 'total') ? "💰 통합 자산 현황" : `💰 ${accNames[acc]} 현황`;
-        document.getElementById('listTitle').innerText = (acc === 'total') ? "🟢 현재보유종목 (통합)" : `🟢 ${accNames[acc]} 보유 종목`;
-        render();
-    }
-
-    function renameAcc(id) {
-        const newName = prompt("계좌 이름을 입력하세요:", accNames[id]);
-        if (newName) {
-            accNames[id] = newName;
-            document.getElementById('acc' + id).innerText = newName;
-            localStorage.setItem('accNames', JSON.stringify(accNames));
-            changeAcc(id);
-        }
-    }
-
-    async function fetchPrice(code) {
-        if(document.getElementById('sellDate').value) return; // 매도 모드일 땐 자동시세 안 함
-        try {
-            const url = `https://query1.finance.yahoo.com/v8/finance/chart/${code}.KS`;
-            const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-            const res = await fetch(proxy);
-            const data = await res.json();
-            const price = JSON.parse(data.contents).chart.result[0].meta.regularMarketPrice;
-            document.getElementById('current').value = price;
-        } catch { console.log("시세 로드 실패"); }
-    }
-    
-    function handleInput(el) { if (el.value.length === 6) fetchPrice(el.value); }
-
-    function saveStock() {
-        if (currentAcc === 'total') return;
-        const name = document.getElementById('name').value;
-        const price = Number(document.getElementById('price').value);
-        const qty = Number(document.getElementById('qty').value);
-        if (!name || !price || !qty) return alert("필수 정보를 입력하세요.");
-        const stockData = {
-            id: editingId || Date.now(),
-            name: name,
-            code: document.getElementById('code').value,
-            price: price, qty: qty,
-            current: Number(document.getElementById('current').value),
-            memo: document.getElementById('memo').value,
-            buyDate: document.getElementById('buyDate').value,
-            sellDate: document.getElementById('sellDate').value
-        };
-        if (editingId) {
-            const idx = allStocks[currentAcc].findIndex(s => s.id === editingId);
-            allStocks[currentAcc][idx] = stockData;
-        } else {
-            allStocks[currentAcc].unshift(stockData);
-        }
-        localStorage.setItem('stocks_' + currentAcc, JSON.stringify(allStocks[currentAcc]));
-        alert(stockData.sellDate ? "매도 기록 완료!" : "저장 완료!");
-        editingId = null;
-        document.getElementById('edit-msg').style.display = 'none';
-        resetInputs();
-        render(); 
-    }
-
-    function render() {
-        const activeList = document.getElementById('activeList');
-        const soldList = document.getElementById('soldList');
-        activeList.innerHTML = ''; soldList.innerHTML = '';
-        let tBuy = 0, tEval = 0;
-        let displayList = (currentAcc === 'total') ? [...allStocks[1], ...allStocks[2], ...allStocks[3]] : allStocks[currentAcc];
-        displayList.forEach(s => {
-            const profit = (s.current - s.price) * s.qty;
-            const rate = ((s.current - s.price) / s.price * 100).toFixed(2);
-            const html = `<div class="stock-item">
-                    <div class="stock-summary" onclick="toggleDetail(${s.id})">
-                        <span>${s.name}</span>
-                        <span class="${profit >= 0 ? 'red' : 'blue'}">${rate}%</span>
-                    </div>
-                    <div id="det-${s.id}" class="stock-details">
-                        <div class="info-row">
-                            <span><span class="info-label">평단:</span> <span class="info-val">${s.price.toLocaleString()}원</span></span>
-                            <span><span class="info-label">${s.sellDate ? '매도:' : '현재:'}</span> <span class="info-val">${s.current.toLocaleString()}원</span></span>
-                        </div>
-                        <div class="info-row">
-                            <span><span class="info-label">수량:</span> <span class="info-val">${s.qty}주</span></span>
-                            <span><span class="info-label">손익:</span> <span class="info-val ${profit >= 0 ? 'red' : 'blue'}">${profit.toLocaleString()}원</span></span>
-                        </div>
-                        <div style="font-size:12px; color:#666; margin-top:8px; border-top: 1px dashed #ddd; padding-top: 5px;">📅 ${s.buyDate || '-'} ~ ${s.sellDate || '보유중'}</div>
-                        ${s.memo ? `<span class="memo-text">📝 ${s.memo}</span>` : ''}
-                        ${currentAcc !== 'total' ? `<div style="display:flex; gap:5px; margin-top:10px;">
-                            <button class="btn-sub" style="background:#28a745" onclick="fillEdit(${s.id})">수정/매도</button>
-                            <button class="btn-sub" style="background:#ff4d4d" onclick="deleteStock(${s.id})">삭제</button>
-                        </div>` : ''}
-                    </div></div>`;
-            if (s.sellDate) soldList.innerHTML += html;
-            else {
-                activeList.innerHTML += html;
-                tBuy += s.price * s.qty;
-                tEval += s.current * s.qty;
-            }
-        });
-        const tProfit = tEval - tBuy;
-        const tRate = tBuy === 0 ? 0 : ((tProfit / tBuy) * 100).toFixed(2);
-        document.getElementById('totalBuy').innerText = tBuy.toLocaleString() + '원';
-        document.getElementById('totalEval').innerText = tEval.toLocaleString() + '원';
-        document.getElementById('totalProfit').innerText = `${tProfit.toLocaleString()}원 (${tRate}%)`;
-        document.getElementById('totalProfit').className = 'summary-value ' + (tProfit >= 0 ? 'red' : 'blue');
-    }
-
-    function fillEdit(id) {
-        const s = allStocks[currentAcc].find(x => x.id === id);
-        editingId = s.id;
-        document.getElementById('name').value = s.name;
-        document.getElementById('code').value = s.code;
-        document.getElementById('price').value = s.price;
-        document.getElementById('qty').value = s.qty;
-        document.getElementById('current').value = s.current;
-        document.getElementById('memo').value = s.memo || "";
-        document.getElementById('buyDate').value = s.buyDate;
-        document.getElementById('sellDate').value = s.sellDate || "";
-        document.getElementById('edit-msg').style.display = 'block';
-        checkSellMode();
-        window.scrollTo({top:0, behavior:'smooth'});
-    }
-
-    function deleteStock(id) {
-        if(confirm("삭제할까요?")) {
-            allStocks[currentAcc] = allStocks[currentAcc].filter(x => x.id !== id);
-            localStorage.setItem('stocks_' + currentAcc, JSON.stringify(allStocks[currentAcc]));
+  async function init() {
+    render();
+    var ok = false;
+    try {
+      if (window.claude && claude.use) {
+        var db = await claude.use('db');
+        var user = await claude.use('user');
+        var uid = user ? await user.id() : null;
+        if (db && uid) {
+          col = db.collection('data/users/' + uid);
+          mode = 'db';
+          ok = true;
+          col.onSnapshot(function (snap) {
+            words = snap.docs.map(function (d) {
+              var x = d.data() || {};
+              var body = x.body;
+              if (body == null) body = [x.e, x.m, x.s].filter(Boolean).join('\n\n');
+              return { id: d.id, title: x.title || '', body: body || '',
+                       created: x.created || 0, updated: x.updated || 0 };
+            });
             render();
+          }, function () { mode = 'local'; words = lsRead(); render(); });
         }
-    }
+      }
+    } catch (e) { ok = false; }
+    if (!ok) { mode = 'local'; words = lsRead(); render(); }
+  }
 
-    function resetInputs() {
-        document.getElementById('name').value = "";
-        document.getElementById('code').value = "";
-        document.getElementById('price').value = "";
-        document.getElementById('qty').value = "";
-        document.getElementById('current').value = "";
-        document.getElementById('memo').value = "";
-        document.getElementById('sellDate').value = "";
-        document.getElementById('buyDate').value = new Date().toISOString().split('T')[0];
-        checkSellMode();
-    }
+  function sorted(list) {
+    var cmp = {
+      az: function (a, b) { return a.title.toLowerCase().localeCompare(b.title.toLowerCase(), 'en'); },
+      za: function (a, b) { return b.title.toLowerCase().localeCompare(a.title.toLowerCase(), 'en'); },
+      created: function (a, b) { return (a.created || 0) - (b.created || 0); },
+      updated: function (a, b) { return (b.updated || 0) - (a.updated || 0); }
+    }[$('sort').value];
+    return list.slice().sort(cmp);
+  }
 
-    function toggleDetail(id) {
-        const el = document.getElementById('det-' + id);
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    }
+  function matches(w, q) {
+    if (!q) return true;
+    return (w.title + '\n' + w.body).toLowerCase().indexOf(q.toLowerCase()) >= 0;
+  }
 
-    function toggleSoldList() {
-        const el = document.getElementById('soldList');
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    }
+  function cardFor(w) {
+    var c = document.createElement('button');
+    c.type = 'button'; c.className = 'card';
+    var h = document.createElement('h3'); h.textContent = w.title; c.appendChild(h);
+    var b = document.createElement('div'); b.className = 'body'; b.textContent = w.body; c.appendChild(b);
+    c.addEventListener('click', function () { openEditor(w); });
+    return c;
+  }
 
-    function exportData() {
-        const backupData = { stocks: allStocks, names: accNames };
-        const dataStr = JSON.stringify(backupData);
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "용용_3계좌_통합백업.json";
-        link.click();
-    }
+  function render() {
+    var q = $('q').value.trim();
+    var list = sorted(words.filter(function (w) { return matches(w, q); }));
+    grid.textContent = '';
+    list.forEach(function (w) { grid.appendChild(cardFor(w)); });
+    if (!list.length) {
+      emptyEl.hidden = false;
+      emptyEl.textContent = words.length ? '검색 결과가 없습니다.' : '메모가 없습니다.\n오른쪽 아래 + 버튼으로 추가하세요.';
+    } else { emptyEl.hidden = true; }
+  }
 
-    function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if (imported.stocks && imported.names) {
-                    allStocks = imported.stocks;
-                    accNames = imported.names;
-                    localStorage.setItem('stocks_1', JSON.stringify(allStocks[1]));
-                    localStorage.setItem('stocks_2', JSON.stringify(allStocks[2]));
-                    localStorage.setItem('stocks_3', JSON.stringify(allStocks[3]));
-                    localStorage.setItem('accNames', JSON.stringify(accNames));
-                    for(let i=1; i<=3; i++) {
-                        let el = document.getElementById('acc'+i);
-                        if(el) el.innerText = accNames[i];
-                    }
-                    alert("통합 데이터를 성공적으로 복구했습니다!");
-                    render();
-                } else { alert("올바른 백업 파일이 아닙니다."); }
-            } catch { alert("파일을 읽는 중 오류가 발생했습니다."); }
-        };
-        reader.readAsText(file);
-    }
+  function grow() {
+    var t = $('f-body');
+    t.style.height = 'auto';
+    t.style.height = Math.max(t.scrollHeight, Math.round(window.innerHeight * 0.6)) + 'px';
+  }
+
+  function openEditor(w) {
+    editingId = w ? w.id : null;
+    $('f-title').value = w ? w.title : '';
+    $('f-body').value = w ? w.body : '';
+    $('err').textContent = '';
+    delArmed = false;
+    $('del').textContent = '삭제';
+    $('del').style.visibility = w ? 'visible' : 'hidden';
+    dlg.showModal();
+    $('edit').scrollTop = 0;
+    grow();
+    if (!w) $('f-title').focus();
+  }
+
+  async function saveAndClose() {
+    var title = $('f-title').value.trim();
+    var body = $('f-body').value.replace(/\s+$/, '');
+    if (!title && !body) { dlg.close(); return; }
+    if (!title) { $('err').textContent = '제목(단어)을 입력해 주세요.'; $('f-title').focus(); return; }
+    var now = Date.now();
+    var old = editingId ? words.find(function (x) { return x.id === editingId; }) : null;
+    var w = {
+      id: old ? old.id : newId(),
+      title: title,
+      body: body,
+      created: old ? (old.created || now) : now,
+      updated: now
+    };
+    var changed = !old || old.title !== w.title || old.body !== w.body;
+    if (!changed) { dlg.close(); return; }
+    try { await saveWord(w); dlg.close(); }
+    catch (e) { $('err').textContent = '저장하지 못했습니다. 다시 시도해 주세요.'; }
+  }
+
+  $('add').addEventListener('click', function () { openEditor(null); });
+  $('back').addEventListener('click', saveAndClose);
+  dlg.addEventListener('cancel', function (ev) { ev.preventDefault(); saveAndClose(); });
+  $('f-body').addEventListener('input', grow);
+
+  $('del').addEventListener('click', async function () {
+    if (!editingId) return;
+    if (!delArmed) { delArmed = true; $('del').textContent = '정말 삭제'; return; }
+    try { await removeWord(editingId); dlg.close(); }
+    catch (e) { $('err').textContent = '삭제하지 못했습니다. 다시 시도해 주세요.'; }
+  });
+
+  $('q').addEventListener('input', render);
+  $('sort').addEventListener('change', function () {
+    try { localStorage.setItem('vocab-sort', $('sort').value); } catch (e) {}
+    render();
+  });
+  try {
+    var s = localStorage.getItem('vocab-sort');
+    if (s && ['az', 'za', 'created', 'updated'].indexOf(s) >= 0) $('sort').value = s;
+  } catch (e) {}
+
+  init();
+})();
 </script>
 </body>
 </html>
